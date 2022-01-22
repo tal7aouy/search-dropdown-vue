@@ -1,6 +1,6 @@
 {
   "name": "search-dropdown-vue",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "An easier way to display A Vue.js  dropdown component with search",
   "main": "SearchDropdown.vue",
   "repository": {
