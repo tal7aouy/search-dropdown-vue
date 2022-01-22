@@ -1,0 +1,32 @@
+{
+  "name": "search-dropdown-vue",
+  "version": "1.0.0",
+  "description": "An easier way to display A Vue.js  dropdown component with search",
+  "main": "SearchDropdown.vue",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tal7aouy/search-dropdown-vue.git"
+  },
+  "keywords": [
+    "vue",
+    "dropdown",
+    "vue-dropdown",
+    "vue-dropdowns",
+    "search",
+    "searchable",
+    "searchList",
+    "searchFilter"
+  ],
+  "author": {
+    "email": "talhaouycoding@gmail.com",
+    "name": "Mhammed Talhaouy"
+  },
+  "devDependencies": {
+    "prettier": "^2.5.1"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tal7aouy/search-dropdown-vue/issues"
+  },
+  "homepage": "https://github.com/tal7aouy/search-dropdown-vue#readme"
+}
