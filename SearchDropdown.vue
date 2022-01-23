@@ -5,7 +5,7 @@ export default {
     name: {
       type: String,
       required: false,
-      default: 'dropdown input',
+      default: 'input',
     },
     options: {
       type: Array,
