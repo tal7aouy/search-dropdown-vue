@@ -72,7 +72,6 @@ export default {
       } else {
         this.searchFilter = this.selected.name;
       }
-      this.$emit('selected', this.selected);
       this.optionsShown = false;
     },
     // Selecting when pressing Enter
