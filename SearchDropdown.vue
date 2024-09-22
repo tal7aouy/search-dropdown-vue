@@ -1,108 +1,117 @@
-<script>
-export default {
-  name: 'SearchDropdown',
-  props: {
-    name: {
-      type: String,
-      required: false,
-      default: 'input',
-    },
-    options: {
-      type: Array,
-      required: true,
-      default: [],
-    },
-    placeholder: {
-      type: String,
-      required: false,
-      default: 'Please select an option',
-    },
-    disabled: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-    maxItem: {
-      type: Number,
-      required: false,
-      default: 10,
-    },
+<script setup>
+import { ref, computed, watch } from 'vue';
+
+// Props
+const props = defineProps({
+  name: {
+    type: String,
+    required: false,
+    default: 'input',
   },
-  data() {
-    return {
-      selected: {},
-      optionsShown: false,
-      searchFilter: '',
-    };
+  options: {
+    type: Array,
+    required: true,
+    default: () => [],
   },
-  created() {
-    this.$emit('selected', this.selected);
+  placeholder: {
+    type: String,
+    required: false,
+    default: 'Please select an option',
   },
-  computed: {
-    filteredOptions() {
-      const filtered = [];
-      const regex = new RegExp(this.searchFilter, 'ig');
-      for (const option of this.options) {
-        if (this.searchFilter.length < 1 || option.name.match(regex)) {
-          if (filtered.length < this.maxItem) filtered.push(option);
-        } else {
-          if (filtered.length > this.maxItem) filtered.push('option');
-        }
+  disabled: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
+  maxItem: {
+    type: Number,
+    required: false,
+    default: 10,
+  },
+});
+
+// Local state
+const selected = ref({});
+const optionsShown = ref(false);
+const searchFilter = ref('');
+
+// Computed properties
+const filteredOptions = computed(() => {
+  const filtered = [];
+  const lowerCaseSearch = searchFilter.value.toLowerCase(); // Convert search input to lowercase
+
+  for (const option of props.options) {
+    const optionNameLowerCase = option.name.toLowerCase(); // Convert option name to lowercase
+    // Use includes() to check for matches
+    if (
+      lowerCaseSearch.length < 1 ||
+      optionNameLowerCase.includes(lowerCaseSearch)
+    ) {
+      if (filtered.length < props.maxItem) {
+        filtered.push(option);
       }
-      return filtered;
-    },
-  },
-  methods: {
-    selectOption(option) {
-      this.selected = option;
-      this.optionsShown = false;
-      this.searchFilter = this.selected.name;
-      this.$emit('selected', this.selected);
-    },
-    showOptions() {
-      if (!this.disabled) {
-        this.searchFilter = '';
-        this.optionsShown = true;
-      }
-    },
-    exit() {
-      if (!this.selected.id) {
-        this.selected = {};
-        this.searchFilter = '';
-      } else {
-        this.searchFilter = this.selected.name;
-      }
-      this.optionsShown = false;
-    },
-    // Selecting when pressing Enter
-    keyMonitor: function (event) {
-      if (event.key === 'Enter' && this.filteredOptions[0])
-        this.selectOption(this.filteredOptions[0]);
-    },
-  },
-  watch: {
-    searchFilter() {
-      if (this.filteredOptions.length === 0) {
-        this.selected = {};
-      } else {
-        this.selected = this.filteredOptions[0];
-      }
-      this.$emit('filter', this.searchFilter);
-    },
-  },
-};
+    }
+  }
+
+  return filtered;
+});
+
+// Emits
+const emit = defineEmits(['selected', 'filter']);
+
+// Watch searchFilter changes
+watch(searchFilter, () => {
+  if (filteredOptions.value.length === 0) {
+    selected.value = {};
+  } else {
+    selected.value = filteredOptions.value[0];
+  }
+  emit('filter', searchFilter.value);
+});
+
+// Functions
+function selectOption(option) {
+  selected.value = option;
+  optionsShown.value = false;
+  searchFilter.value = selected.value.name;
+  emit('selected', selected.value);
+}
+
+function showOptions() {
+  if (!props.disabled) {
+    searchFilter.value = '';
+    optionsShown.value = true;
+  }
+}
+
+function exit() {
+  if (!selected.value.id) {
+    selected.value = {};
+    searchFilter.value = '';
+  } else {
+    searchFilter.value = selected.value.name;
+  }
+  optionsShown.value = false;
+}
+
+function keyMonitor(event) {
+  if (event.key === 'Enter' && filteredOptions.value[0]) {
+    selectOption(filteredOptions.value[0]);
+  }
+}
 </script>
+
 <template>
-  <div class="dropdown" v-if="options">
+  <div class="dropdown" v-if="props.options">
     <div class="dropdown-toggle">
       <input
-        :name="name"
-        @focus="showOptions()"
-        @blur="exit()"
+        :name="props.name"
+        @focus="showOptions"
+        @blur="exit"
         @keyup="keyMonitor"
         v-model="searchFilter"
-        :disabled="disabled"
-        :placeholder="placeholder"
+        :disabled="props.disabled"
+        :placeholder="props.placeholder"
       />
     </div>
     <transition name="fade">
@@ -120,6 +129,7 @@ export default {
     </transition>
   </div>
 </template>
+
 
 <style scoped>
 .fade-enter-active,
